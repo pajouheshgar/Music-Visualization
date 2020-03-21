@@ -40,8 +40,9 @@ if __name__ == '__main__':
     print(len(cqt_split))
     print(len(times))
     print(cqt_split[100].shape)
-    print(cqt_split[100].max())
-    print(cqt_split[100].mean())
-    print(cqt_split[100].min())
-    plt.imshow(cqt_split[100])
+    print(cqt_split[200].shape)
+    for i in range(450):
+        print(cqt_split[i][17].mean())
+    f = range(60)
+    plt.plot(f, np.mean(cqt_split[100], axis=-1))
     plt.show()

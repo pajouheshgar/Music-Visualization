@@ -33,7 +33,7 @@ class Camera(NamedTuple):
 
 class Mesh(NamedTuple):
     faces: np.ndarray
-    shader: Callable[[int, float], dict] = None
+    shader: Callable[[float, pyrr.Matrix33], dict] = None
     style: dict = None
     circle_radius: float = 0
 
@@ -111,7 +111,7 @@ class Engine:
         # Compute the winding direction of each polygon.
         windings = np.zeros(faces.shape[0])
         if faces.shape[1] >= 3:
-            p0, p1, p2 = faces[:, 0, :], faces[:, 1, :], faces[:, 2, :]
+            p0, p1, p2 = faces[:, 0, :], faces[:, 1, :], faces[:, -1, :]
             normals = np.cross(p2 - p0, p1 - p0)
             np.copyto(windings, normals[:, 2])
 
@@ -119,8 +119,9 @@ class Engine:
 
         # Create circles.
         if mesh.circle_radius > 0:
+            print("HELLO")
             for face_index, face in enumerate(faces):
-                style = shader(face_indices[face_index], 0)
+                style = shader(0, mesh.faces[face_indices[face_index]])
                 if style is None:
                     continue
                 face = np.around(face[:, :2], self.precision)
@@ -130,7 +131,7 @@ class Engine:
 
         # Create polygons and lines.
         for face_index, face in enumerate(faces):
-            style = shader(face_indices[face_index], windings[face_index])
+            style = shader(windings[face_index], mesh.faces[face_indices[face_index]])
             if style is None:
                 continue
             face = np.around(face[:, :2], self.precision)
@@ -147,6 +148,12 @@ class Engine:
             z_centroids[face_index] /= len(faces[face_index])
         return np.argsort(z_centroids)
 
+
+def rgb(r, g, b):
+    r = max(0.0, min(r, 1.0))
+    g = max(0.0, min(g, 1.0))
+    b = max(0.0, min(b, 1.0))
+    return svgwrite.utils.rgb(r * 255, g * 255, b * 255)
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
