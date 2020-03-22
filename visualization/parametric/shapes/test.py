@@ -4,7 +4,7 @@ import pyrr
 import cairosvg
 
 import visualization.parametric.utils.svg3d as svg3d
-from visualization.parametric.shapes.doughnut import Doughnut
+from visualization.parametric.shapes.parametric_surface import doughnut
 from visualization.parametric.transformations.deformations import RandomNoise
 from visualization.parametric.transformations.rotations import XRotation
 
@@ -50,13 +50,13 @@ if __name__ == '__main__':
     )
 
     alpha = 3
-    shape = Doughnut({"R": 8, "r": 5}, (50, 20))
+    shape = doughnut(8, 5, (50, 20))
     while True:
         print(shape.vertices.shape)
         print(type(shape.vertices))
-        shape = shape.add_transformation(RandomNoise({"distortion": 0.01}))
-        shape = shape.add_transformation(XRotation({"angle": alpha}))
-        faces = shape.get_faces(triangular=False)
+        faces = shape.transform(RandomNoise({"distortion": 0.01})) \
+            .transform(XRotation({"angle": alpha})) \
+            .get_faces(triangular=False)
 
         mesh = svg3d.Mesh(faces, shader=frontface_shader)
         view = svg3d.View(camera, svg3d.Scene([mesh]))

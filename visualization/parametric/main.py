@@ -9,7 +9,7 @@ import moviepy.editor as mpe
 import scipy.io.wavfile as wavfile
 
 import visualization.parametric.utils.svg3d as svg3d
-from visualization.parametric.shapes.doughnut import Doughnut
+from visualization.parametric.shapes.parametric_surface import doughnut
 
 from preprocessing.bar_extraction import extract_bar_cqt
 from visualization.parametric.transformations.deformations import RandomNoise
@@ -91,10 +91,10 @@ def main(wav_file, output_file, duration=10, fps=30):
         if start_flag:
             r += delta_r
 
-        shape = Doughnut({"R": R, "r": r})
-        shape = shape.add_transformation(RandomNoise({"distortion": 15 / (np.abs(low_freq) ** 2)})).add_transformation(
-            XRotation({"angle": t * 20}))
-        faces = shape.get_faces(resolution=(50, 20), triangular=True)
+        shape = doughnut(R, r, (50, 20))
+        faces = shape.transform(RandomNoise({"distortion": 15 / (np.abs(low_freq) ** 2)}))\
+            .transforma(XRotation({"angle": t * 20}))\
+            .get_faces(triangular=True)
         mesh = svg3d.Mesh(faces, shader=frontface_shader)
         view = svg3d.View(camera, svg3d.Scene([mesh]))
         svg3d.Engine([view]).render("temp.svg")
@@ -119,4 +119,4 @@ def main(wav_file, output_file, duration=10, fps=30):
 
 
 if __name__ == '__main__':
-    main("../../dataset/wav/SanTropez.wav", "out.mp4", duration=120, fps=25)
+    main("../../dataset/wav/Naruto - Sadness and Sorrow.wav", "out.mp4", duration=120, fps=25)

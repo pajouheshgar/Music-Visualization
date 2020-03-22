@@ -1,3 +1,4 @@
+numpy
 scipy==1.4.1
 librosa==0.7.2
 opencv-contrib-python
@@ -5,3 +6,4 @@ svgwrite
 pyrr
 tqdm
 cairosvg
+cached-property==1.5.1
