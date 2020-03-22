@@ -34,10 +34,10 @@ def frontface_shader(winding, face):
 
 if __name__ == '__main__':
     view = pyrr.matrix44.create_look_at(
-        eye=[0, 0, 120], target=[0, 0, 0], up=[0, 1, 0]
+        eye=[0, 0, 35], target=[0, 0, 0], up=[0, 1, 0]
     )
     projection = pyrr.matrix44.create_perspective_projection(
-        fovy=15, aspect=1, near=10, far=200
+        fovy=60, aspect=1, near=10, far=200
     )
     camera = svg3d.Camera(view, projection)
 
@@ -49,13 +49,15 @@ if __name__ == '__main__':
         stroke_width="0.001",
     )
 
-    alpha = 0
+    alpha = 3
+    shape = Doughnut({"R": 8, "r": 5}, (50, 20))
     while True:
-        alpha += 3
-        faces = Doughnut({"R": 8, "r": 5}).add_transformation(RandomNoise({"distortion": 0.05})).add_transformation(
-            XRotation({"angle": alpha})).get_faces(resolution=(50, 30), triangular=False)
+        print(shape.vertices.shape)
+        print(type(shape.vertices))
+        shape = shape.add_transformation(RandomNoise({"distortion": 0.01}))
+        shape = shape.add_transformation(XRotation({"angle": alpha}))
+        faces = shape.get_faces(triangular=False)
 
-        print(faces.shape)
         mesh = svg3d.Mesh(faces, shader=frontface_shader)
         view = svg3d.View(camera, svg3d.Scene([mesh]))
         svg3d.Engine([view]).render("temp.svg")

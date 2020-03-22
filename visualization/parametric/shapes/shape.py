@@ -1,46 +1,40 @@
 class Shape:
-    def __init__(self, parameters):
+    def __init__(self, parameters: dict, resolution: tuple):
         self.parameters = parameters
+        self.resolution = resolution
+        self.vertices = None
 
-    def get_faces(self, resolution):
+    def get_faces(self):
         """
-
-        :param resolution: resolution of meshing
         :return: n * m * 3 numpy array
         """
 
-    @staticmethod
-    def generate_quadratic_indices(resolution, closed=True):
+    def generate_quadratic_indices(self, closed=True):
         rows = []
         cols = []
         if closed:
             start = -1
         else:
             start = 0
-        for i in range(start, resolution[0] - 1):
-            for j in range(start, resolution[1] - 1):
+        for i in range(start, self.resolution[0] - 1):
+            for j in range(start, self.resolution[1] - 1):
                 rows.append([i, i + 1, i + 1, i])
                 cols.append([j, j, j + 1, j + 1])
 
         return rows, cols
 
-    @staticmethod
-    def generate_triangular_indices(resolution, closed=True):
+    def generate_triangular_indices(self, closed=True):
         rows = []
         cols = []
         if closed:
             start = -1
         else:
             start = 0
-        for i in range(start, resolution[0] - 1):
-            for j in range(start, resolution[1] - 1):
+        for i in range(start, self.resolution[0] - 1):
+            for j in range(start, self.resolution[1] - 1):
                 rows.append([i, i + 1, i + 1])
                 cols.append([j, j, j + 1])
                 rows.append([i, i + 1, i])
                 cols.append([j, j + 1, j + 1])
 
         return rows, cols
-
-
-# class CompositeShape:
-#     def
