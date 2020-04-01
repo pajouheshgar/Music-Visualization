@@ -16,6 +16,35 @@ class ParametricSurface:
         return self.vertices[mesh_indices]
 
     @cached_property
+    def flat_vertices(self):
+        return self.vertices.reshape([-1, 3])
+
+    @cached_property
+    def flat_triangular_mesh_indices(self):
+        rows, cols = self.triangular_mesh_indices
+        rows = np.array(rows).reshape([-1, 3])
+        cols = np.array(cols).reshape([-1, 3])
+        if self.closed[0]:
+            rows[rows == -1] = self.resolution[0] - 1
+        if self.closed[1]:
+            cols[cols == -1] = self.resolution[1] - 1
+
+        return rows * self.resolution[1] + cols
+
+    @cached_property
+    def flat_quadratic_mesh_indices(self):
+        rows, cols = self.quadratic_mesh_indices
+        rows = np.array(rows).reshape([-1, 4])
+        cols = np.array(cols).reshape([-1, 4])
+
+        if self.closed[0]:
+            rows[rows == -1] = self.resolution[0] - 1
+        if self.closed[1]:
+            cols[cols == -1] = self.resolution[1] - 1
+
+        return rows * self.resolution[1] + cols
+
+    @cached_property
     def quadratic_mesh_indices(self):
         rows = []
         cols = []
